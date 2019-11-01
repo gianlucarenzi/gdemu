@@ -67,11 +67,7 @@ static inline uint16_t readUInt16(unsigned char *gameduinoRam, int offset)
 static inline uint16_t readUInt16Flipped(unsigned char *gameduinoRam, int offset)
 {
 	uint16_t value = readUInt16(gameduinoRam, offset);
-#ifdef __BIG_ENDIAN__
-	return value;
-#else
 	return value >> 8 | value << 8; // (gameduinoRam[offset] << 8) | (gameduinoRam[offset + 1]);
-#endif
 }
 
 static inline void writeUInt16(unsigned char *gameduinoRam, int offset, uint16_t value)
