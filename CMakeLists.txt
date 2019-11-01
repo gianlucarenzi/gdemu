@@ -61,5 +61,6 @@ ADD_SUBDIRECTORY(joytest)
 ADD_SUBDIRECTORY(ikeda)
 ADD_SUBDIRECTORY(knot)
 ADD_SUBDIRECTORY(chua)
+ADD_SUBDIRECTORY(chopper)
 
 ########################################################################
