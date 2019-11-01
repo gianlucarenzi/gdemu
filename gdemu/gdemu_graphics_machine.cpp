@@ -54,19 +54,36 @@ static inline int isAlpha1555(unsigned short argb1555) { return (argb1555 & 0x80
 
 static inline uint16_t readUInt16(unsigned char *gameduinoRam, int offset)
 {
-	return *(uint16_t *)(&gameduinoRam[offset]);
+	uint16_t swapped, value;
+	value = *(uint16_t *) (&gameduinoRam[offset]);
+#ifdef __BIG_ENDIAN__
+	swapped = (value >> 8) | (value << 8);
+#else
+	swapped = value;
+#endif
+	return swapped;
 }
 
 static inline uint16_t readUInt16Flipped(unsigned char *gameduinoRam, int offset)
 {
 	uint16_t value = readUInt16(gameduinoRam, offset);
+#ifdef __BIG_ENDIAN__
+	return value;
+#else
 	return value >> 8 | value << 8; // (gameduinoRam[offset] << 8) | (gameduinoRam[offset + 1]);
+#endif
 }
 
 static inline void writeUInt16(unsigned char *gameduinoRam, int offset, uint16_t value)
 {
+	uint16_t swapped;
 	// printf("write: %i\n", value);
-	*(uint16_t *)(&gameduinoRam[offset]) = value;
+#ifdef __BIG_ENDIAN__
+	swapped = (value >> 8) | (value << 8);
+#else
+	swapped = value;
+#endif
+	*(uint16_t *)(&gameduinoRam[offset]) = swapped;
 }
 
 void GraphicsMachineClass::process()
