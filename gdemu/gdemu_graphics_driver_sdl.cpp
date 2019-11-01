@@ -45,6 +45,7 @@ using namespace std;
 #define GDEMU_WINDOW_HEIGHT 300
 #define GDEMU_WINDOW_RATIO (4.0f / 3.0f)
 #define GDEMU_WINDOW_KEEPRATIO 1
+#define GDEMU_WINDOW_SCALE 1
 
 namespace GDEMU {
 
@@ -84,7 +85,7 @@ void GraphicsDriverClass::begin()
 {
 	SDL_InitSubSystem(SDL_INIT_VIDEO);
 
-	s_Screen = SDL_SetVideoMode(GDEMU_WINDOW_WIDTH * 1, GDEMU_WINDOW_HEIGHT * 1, 15, SDL_SWSURFACE | SDL_ASYNCBLIT);
+	s_Screen = SDL_SetVideoMode(GDEMU_WINDOW_WIDTH * GDEMU_WINDOW_SCALE, GDEMU_WINDOW_HEIGHT * GDEMU_WINDOW_SCALE, 15, SDL_SWSURFACE | SDL_ASYNCBLIT);
 	if (s_Screen == NULL) SystemSdlClass::ErrorSdl();
 
 	SDL_WM_SetCaption(GDEMU_WINDOW_TITLE, NULL);
