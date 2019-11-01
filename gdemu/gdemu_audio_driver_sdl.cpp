@@ -80,7 +80,11 @@ void AudioDriverClass::begin()
 	SDL_AudioSpec obtained;
 
 	desired.freq = 22050;
+#ifdef __BIG_ENDIAN__
+	desired.format = AUDIO_S16MSB;
+#else
 	desired.format = AUDIO_S16LSB;
+#endif
 	desired.channels = 2;
 	desired.samples = 512; // 2048; //8192;
 	desired.callback = sdlAudioCallback;
