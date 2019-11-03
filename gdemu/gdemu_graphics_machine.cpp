@@ -52,6 +52,21 @@ int g_J1RasterChasingCycles = 256;
 
 static inline int isAlpha1555(unsigned short argb1555) { return (argb1555 & 0x8000); }
 
+static inline uint32_t readUInt32(int32_t *gameduinoRam, int offset)
+{
+	uint32_t swapped, value;
+	value = *(uint32_t *) (&gameduinoRam[offset]);
+#ifdef __BIG_ENDIAN__
+	swapped = (value & 0xff000000) >> 24;
+	swapped |= (value & 0x00ff0000) >> 8;
+	swapped |= (value & 0x0000ff00) << 8;
+	swapped |= (value & 0x000000ff) << 24;
+#else
+	swapped = value;
+#endif
+	return swapped;
+}
+
 static inline uint16_t readUInt16(unsigned char *gameduinoRam, int offset)
 {
 	uint16_t swapped, value;
@@ -135,6 +150,7 @@ void GraphicsMachineClass::process()
 				int palIdx = RAM_PAL + (charPic * 8);
 
 				unsigned short chrRow = readUInt16Flipped(gameduinoRam, chrIdx + ((charY) * 2));
+
 				chrRow >>= (charX * 2);
 
 				for (; charX < 8 && x >= 0; ++charX)
@@ -162,7 +178,7 @@ void GraphicsMachineClass::process()
 			for (int sprI = 0; sprI < 256; ++sprI)
 			{
 				int ramSprC32 = ramSpr32 + sprI;
-				int spriteControl = gameduinoRam32[ramSprC32];
+				int spriteControl = readUInt32(gameduinoRam32, ramSprC32);
 				int yCoord = (((spriteControl >> 16) + 16) & 0x01FF) - 16; // if (ycoord + 16 > 512) ycoord -= 512;
 
 				if (yCoord <= y && yCoord + 15 >= y)
@@ -234,7 +250,7 @@ void GraphicsMachineClass::process()
 									if (lineColl[screenCollOffset] != 0xFF)
 									{
 										/*(gameduinoRam[lineColl[screenCollOffset] + 3] >> 7)*/
-										if (!(jkMode && ((gameduinoRam32[ramSpr32 + lineColl[screenCollOffset]] >> 31) == (spriteControl >> 31))))
+										if (!(jkMode && ((readUInt32(gameduinoRam32, ramSpr32 + lineColl[screenCollOffset]) >> 31) == (spriteControl >> 31))))
 										{
 											// QUESTION: OVERWRITE POSSIBLY EXISTING VALUE IN COLLISION REGISTER OR NOT?
 											gameduinoRam[colIdx] = lineColl[screenCollOffset];
