@@ -159,6 +159,8 @@ void GraphicsDriverClass::renderBuffer()
 	//SDL_UpdateRect(s_Screen, 0, 0, 0, 0);
 	SDL_CondBroadcast(s_WaitFlip);
 
+#ifdef SHOW_STATISTICS
+	// This slows down a lot the executing code!
 	std::stringstream newTitle;
 	newTitle << GDEMU_WINDOW_TITLE;
 	if (GameduinoSPI.getRam()[0x2809] == 0)
@@ -169,6 +171,7 @@ void GraphicsDriverClass::renderBuffer()
 	newTitle << System.getFPS();
 	newTitle << (")]");
 	SDL_WM_SetCaption(newTitle.str().c_str(), NULL);
+#endif
 
 	/*
 	// Render bitmap to buffer
